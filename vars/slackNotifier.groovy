@@ -1,15 +1,24 @@
 def call(String buildResult) {
-  if ( buildResult == "SUCCESS" ) {
-    slackSend color: "good", message: "CONGRATULATION: Job ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} was successful ! more info ${env.BUILD_URL}"
-  }
-  else if( buildResult == "FAILURE" ) {
-    slackSend color: "danger", message: "BAD NEWS:Job ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} was failed ! more info ${env.BUILD_URL}"
-  }
-  else if( buildResult == "UNSTABLE" ) {
-    slackSend color: "warning", message: "BAD NEWS:Job ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} was unstable ! more info ${env.BUILD_URL}"
-  }
-  else {
-    slackSend color: "danger", message: "BAD NEWS:Job ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} its result was unclear ! more info ${env.BUILD_URL}"
-  }
-}
+  def color
+  def message
 
+  switch(buildResult) {
+    case "SUCCESS":
+      color = "good"
+      message = "✅ SUCCESS: Job ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+      break
+    case "FAILURE":
+      color = "danger"
+      message = "❌ FAILURE: Job ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+      break
+    case "UNSTABLE":
+      color = "warning"
+      message = "⚠️ UNSTABLE: Job ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+      break
+    default:
+      color = "#cccccc"
+      message = "❓ UNKNOWN STATUS: Job ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+  }
+
+  slackSend(channel: '#all-cybertech', color: color, message: message)
+}
